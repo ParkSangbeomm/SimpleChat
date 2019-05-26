@@ -43,13 +43,18 @@ class ChatThread extends Thread{
 			System.out.println(ex);
 		}
 	} // construcor
+
 	public void run(){
 		try{
 			String line = null;
 			while((line = br.readLine()) != null){
 				if(line.equals("/quit"))
 					break;
-				if(line.indexOf("/to ") == 0){
+				if(line.equals("/userlist")){
+					send_userlist();
+			  }else if(line.contains("stupid")==true || line.contains("idiot")==true || line.contains("shit")==true || line.contains("fuck")==true || line.contains("damn")==true){
+					badwords(line);
+				}else if(line.indexOf("/to ") == 0){
 					sendmsg(line);
 				}else
 					broadcast(id + " : " + line);
@@ -67,6 +72,24 @@ class ChatThread extends Thread{
 			}catch(Exception ex){}
 		}
 	} // run
+	public void badwords(String s){
+		Object obj = hm.get(id);
+		PrintWriter pw = (PrintWriter)obj;
+		pw.println("In your sentence, there is bad words.\nDo not speak like that.");
+		pw.flush();
+	}
+	public void send_userlist(){
+
+			Object obj = hm.get(id);
+			PrintWriter pw = (PrintWriter)obj;
+			Collection c=hm.keySet();
+			Iterator it =c.iterator();
+			while(it.hasNext()){
+				pw.println("["+it.next()+"] is here.");
+				pw.flush();
+			}
+
+	}
 	public void sendmsg(String msg){
 		int start = msg.indexOf(" ") +1;
 		int end = msg.indexOf(" ", start);
@@ -83,12 +106,15 @@ class ChatThread extends Thread{
 	} // sendmsg
 	public void broadcast(String msg){
 		synchronized(hm){
+			Iterator<String> it = hm.keySet().iterator();
 			Collection collection = hm.values();
 			Iterator iter = collection.iterator();
-			while(iter.hasNext()){
+			while(iter.hasNext()&&it.hasNext()){
 				PrintWriter pw = (PrintWriter)iter.next();
-				pw.println(msg);
-				pw.flush();
+				if(it.next() != id){
+					pw.println(msg);
+					pw.flush();
+				}
 			}
 		}
 	} // broadcast
