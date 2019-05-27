@@ -88,16 +88,18 @@ class ChatThread extends Thread{
 	//In the while statements, run until iterator has next content
 	//and print the ids that connect in server to user who types "/userlist"
 	public void send_userlist(){
-
+			int count =0;
 			Object obj = hm.get(id);
 			PrintWriter pw = (PrintWriter)obj;
 			Collection c=hm.keySet();
 			Iterator it =c.iterator();
 			while(it.hasNext()){
+				count++;
 				pw.println("["+it.next()+"] is here.");
 				pw.flush();
 			}
-
+			pw.println("There are "+count+" here");
+			pw.flush();
 	}
 	public void sendmsg(String msg){
 		int start = msg.indexOf(" ") +1;
